@@ -33,9 +33,10 @@ class Login(BaseModel):
 def get_logger():
     return logging.getLogger(__name__)
 
-def get_db():
+def get_db(logger: logging.Logger = Depends(get_logger)):
     with contextlib.closing(sqlite3.connect(settings.database)) as db:
         db.row_factory = sqlite3.Row
+        # db.set_trace_callback(logger.debug)
         yield db
 
 settings = Settings()
@@ -107,7 +108,8 @@ def register_user(user_data: User, db: sqlite3.Connection = Depends(get_db)):
     email = user_data.email
 
     # check that the username is not already taken
-    user_exists = db.execute(f"SELECT * FROM Registrations WHERE username = ?",(username,)).fetchone()
+    # user_exists = db.execute(f"SELECT * FROM Registrations WHERE username = ?",(username,)).fetchone()
+    user_exists = db.execute(f"SEARCH Registrations USING INDEX sqlite_autoindex_Registrations_1 (Username=?)",(username,)).fetchone()
     if user_exists:
         raise HTTPException(status_code=400, detail="Username already used, try a new username")
 

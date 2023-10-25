@@ -1,0 +1,21 @@
+[2023-10-24 21:11:52,023] DEBUG in users.auth: SELECT * FROM Registrations WHERE username = 'mb'
+[2023-10-24 21:11:52,199] DEBUG in users.auth: BEGIN 
+[2023-10-24 21:11:52,200] DEBUG in users.auth: INSERT INTO Registrations (Username, UserPassword, FullName, Email) VALUES  ('mb','pbkdf2_sha256$600000$a4e453ce697df6d74c8ee0da42521866$iz7yHJRDAscS1Z04IgJbe5zs8A2sUMBZBHEd4HJk6Hs=','Micah','mbaumann@csu.fullerton.edu')
+[2023-10-24 21:11:52,205] DEBUG in users.auth: INSERT INTO Roles (Rolename) VALUES ('Student')
+[2023-10-24 21:11:52,206] DEBUG in users.auth: SELECT RoleId from Roles ORDER BY RoleId DESC LIMIT 1
+[2023-10-24 21:11:52,206] DEBUG in users.auth: INSERT INTO UserRoles (RoleId, UserId) VALUES (13, 15)
+[2023-10-24 21:11:52,208] DEBUG in users.auth: INSERT INTO Roles (Rolename) VALUES ('Instructor')
+[2023-10-24 21:11:52,208] DEBUG in users.auth: SELECT RoleId from Roles ORDER BY RoleId DESC LIMIT 1
+[2023-10-24 21:11:52,208] DEBUG in users.auth: INSERT INTO UserRoles (RoleId, UserId) VALUES (14, 15)
+[2023-10-24 21:11:52,208] DEBUG in users.auth: INSERT INTO Roles (Rolename) VALUES ('Registrar')
+[2023-10-24 21:11:52,208] DEBUG in users.auth: SELECT RoleId from Roles ORDER BY RoleId DESC LIMIT 1
+[2023-10-24 21:11:52,208] DEBUG in users.auth: INSERT INTO UserRoles (RoleId, UserId) VALUES (15, 15)
+[2023-10-24 21:11:52,208] DEBUG in users.auth: COMMIT
+
+[2023-10-24 21:12:22,069] DEBUG in users.auth: SELECT * FROM Registrations WHERE username = 'mb'
+[2023-10-24 21:12:22,243] DEBUG in users.auth: SELECT roles.rolename FROM roles JOIN userroles ON roles.roleid = userroles.roleid WHERE userroles.userid=15
+
+[2023-10-24 21:12:35,878] DEBUG in users.auth: SELECT * FROM Registrations WHERE username = 'mb'
+
+[2023-10-24 21:18:32,005] DEBUG in users.auth: SELECT Email, FullName, UserId, Username FROM Registrations WHERE UserId = 11
+[2023-10-24 21:18:32,006] DEBUG in users.auth: SELECT roles.rolename FROM roles JOIN userroles ON roles.roleid = userroles.roleid WHERE userroles.userid=11
