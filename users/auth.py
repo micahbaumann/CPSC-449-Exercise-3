@@ -8,13 +8,9 @@ from pydantic_settings import BaseSettings
 import base64
 import hashlib
 import secrets
-import json
-from datetime import timedelta
 import datetime
-import os 
-import sys
 from typing import List
-#from jose import JWTError, jwt
+import logging.config
 
 ALGORITHM = "pbkdf2_sha256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -34,6 +30,8 @@ class Login(BaseModel):
     username : str
     password : str
 
+def get_logger():
+    return logging.getLogger(__name__)
 
 def get_db():
     with contextlib.closing(sqlite3.connect(settings.database)) as db:
@@ -43,7 +41,8 @@ def get_db():
 settings = Settings()
 app = FastAPI()
 
-# given 260000 - modified to 600000 based on research
+logging.config.fileConfig(settings.logging_config, disable_existing_loggers=False)
+
 def get_hashed_pwd(password, salt=None, iterations=600000):
     if salt is None:
         salt = secrets.token_hex(16)
@@ -65,16 +64,6 @@ def verify_password(password, password_hash):
     compare_hash = get_hashed_pwd(password, salt, iterations)
     return secrets.compare_digest(password_hash, compare_hash)
 
-'''def create_access_token(data: dict, expires_delta: timedelta = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt'''
-
 def expiration_in(minutes):
     creation = datetime.datetime.now(tz=datetime.timezone.utc)
     expiration = creation + datetime.timedelta(minutes=minutes)
@@ -94,11 +83,6 @@ def generate_claims(username, user_id, roles, name, email):
         "name": name,
         "email": email,
     }
-    '''token = {
-        "access_token": claims,
-        "refresh_token": claims,
-        "exp": int(exp.timestamp()),
-    }'''
 
     return claims
 
@@ -118,7 +102,6 @@ def register_user(user_data: User, db: sqlite3.Connection = Depends(get_db)):
     '''
     username = user_data.username
     userpwd = user_data.password
-    # roles = [role.strip() for role in user_data.roles.split(",")]
     roles = user_data.roles
     name = user_data.name
     email = user_data.email
@@ -153,7 +136,6 @@ def login(user_data: Login, db: sqlite3.Connection = Depends(get_db)):
     '''
     username = user_data.username
     userpwd = user_data.password
-    # userrole = user_data.roles
 
     user_verify = db.execute(f"SELECT * FROM Registrations WHERE username = ?",(username,)).fetchone()
 
@@ -162,11 +144,6 @@ def login(user_data: Login, db: sqlite3.Connection = Depends(get_db)):
     
     roles = db.execute(f"SELECT roles.rolename FROM roles JOIN userroles ON roles.roleid = userroles.roleid WHERE userroles.userid=?",(user_verify[0],)).fetchall()
     roles = [row[0] for row in roles]
-    
-    '''token_expiry = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(data={"sub": username}, expires=token_expiry)
-    db.execute(f"UPDATE Registrations SET BearerToken = ? WHERE username = ?",(access_token, username))
-    db.commit()'''
 
     # if successful, then return JWT Claims
     jwt_claims = generate_claims(username, user_verify[0], roles, user_verify[2], user_verify[3])
