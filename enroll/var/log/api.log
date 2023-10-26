@@ -1,0 +1,78 @@
+[2023-10-26 00:02:17,484] DEBUG in enroll.api: SELECT IsFrozen FROM Freeze
+[2023-10-26 00:02:17,484] DEBUG in enroll.api: SELECT * FROM Classes WHERE             Classes.MaximumEnrollment > (SELECT COUNT(EnrollmentID) FROM Enrollments WHERE Enrollments.ClassID = Classes.ClassID)             OR Classes.WaitlistMaximum > (SELECT COUNT(WaitlistID) FROM Waitlists WHERE Waitlists.ClassID = Classes.ClassID)
+
+[2023-10-26 00:26:14,622] DEBUG in enroll.api: SELECT * FROM Users WHERE UserId = 11
+[2023-10-26 00:26:14,622] DEBUG in enroll.api: SELECT * FROM Classes WHERE ClassID = 2
+[2023-10-26 00:26:14,623] DEBUG in enroll.api: SELECT * FROM Enrollments WHERE ClassID = 2 AND StudentID = 11 AND EnrollmentStatus='ENROLLED'
+[2023-10-26 00:26:14,623] DEBUG in enroll.api: SELECT COUNT() FROM Enrollments WHERE ClassID = 2
+[2023-10-26 00:26:14,623] DEBUG in enroll.api: SELECT COUNT() FROM Waitlists WHERE ClassID = 2
+[2023-10-26 00:26:14,624] DEBUG in enroll.api: SELECT * FROM Waitlists WHERE StudentID = 11 AND ClassID = 2
+[2023-10-26 00:26:14,624] DEBUG in enroll.api: SELECT MAX(Position) FROM Waitlists WHERE ClassID = 2 AND  SectionNumber = 5
+[2023-10-26 00:26:14,624] DEBUG in enroll.api: BEGIN 
+[2023-10-26 00:26:14,624] DEBUG in enroll.api: INSERT INTO Waitlists(StudentID, ClassID, SectionNumber, Position) VALUES(11,2,5,1)
+[2023-10-26 00:26:14,624] DEBUG in enroll.api: COMMIT
+
+[2023-10-26 00:28:17,689] DEBUG in urllib3.connectionpool: Starting new HTTP connection (1): localhost:5200
+[2023-10-26 00:29:15,025] DEBUG in urllib3.connectionpool: Starting new HTTP connection (1): localhost:5600
+[2023-10-26 00:29:15,037] DEBUG in urllib3.connectionpool: http://localhost:5600 "GET /user/get/11 HTTP/1.1" 200 137
+[2023-10-26 00:29:15,038] DEBUG in enroll.api: SELECT * FROM Users WHERE UserId = 11
+[2023-10-26 00:29:15,038] DEBUG in enroll.api: BEGIN 
+[2023-10-26 00:29:15,038] DEBUG in enroll.api: INSERT INTO Classes (ClassID, SectionNumber, MaximumEnrollment, WaitlistMaximum) VALUES('3', '5', 30, 30)
+[2023-10-26 00:29:15,038] DEBUG in enroll.api: INSERT INTO InstructorClasses (InstructorID, ClassID, SectionNumber) VALUES(11, '3', '5')
+[2023-10-26 00:29:15,039] DEBUG in enroll.api: COMMIT
+
+[2023-10-26 00:32:56,406] DEBUG in enroll.api: SELECT * FROM Users WHERE UserId = 11
+[2023-10-26 00:32:56,407] DEBUG in enroll.api: SELECT StudentID FROM Enrollments WHERE StudentID = 11 AND ClassID = 3 AND SectionNumber = 5
+[2023-10-26 00:32:56,407] DEBUG in enroll.api: BEGIN 
+[2023-10-26 00:32:56,407] DEBUG in enroll.api: UPDATE Enrollments SET EnrollmentStatus = 'DROPPED' WHERE StudentID = 11 AND ClassID = 3
+[2023-10-26 00:32:56,407] DEBUG in enroll.api: COMMIT
+[2023-10-26 00:32:56,414] DEBUG in enroll.api: SELECT * FROM Waitlists WHERE ClassID = 3 ORDER BY Position ASC
+
+[2023-10-26 00:34:24,760] DEBUG in enroll.api: SELECT * FROM Users WHERE UserId = 11
+[2023-10-26 00:34:24,760] DEBUG in enroll.api: SELECT * FROM Waitlists WHERE StudentID = 11 AND ClassID = 2
+[2023-10-26 00:34:24,760] DEBUG in enroll.api: BEGIN 
+[2023-10-26 00:34:24,760] DEBUG in enroll.api: DELETE FROM Waitlists WHERE StudentID = 11 AND ClassID = 2
+[2023-10-26 00:34:24,761] DEBUG in enroll.api: UPDATE Classes SET WaitlistCount = WaitlistCount - 1 WHERE ClassID = 2
+[2023-10-26 00:34:24,761] DEBUG in enroll.api: COMMIT
+
+[2023-10-26 01:57:48,495] DEBUG in enroll.api: SELECT * FROM Users WHERE UserId = 11
+[2023-10-26 01:57:48,498] DEBUG in enroll.api: SELECT Position FROM Waitlists WHERE StudentID = 11 AND ClassID = 3
+
+[2023-10-26 01:59:27,731] DEBUG in enroll.api: SELECT * FROM Users WHERE UserId = 11
+[2023-10-26 01:59:27,731] DEBUG in enroll.api: SELECT * FROM InstructorClasses WHERE classID=3 AND SectionNumber=5
+[2023-10-26 01:59:27,731] DEBUG in enroll.api: SELECT StudentID FROM Enrollments WHERE classID=3 AND SectionNumber=5 AND EnrollmentStatus='ENROLLED'
+
+[2023-10-26 02:00:03,185] DEBUG in enroll.api: SELECT * FROM Users WHERE UserId = 11
+[2023-10-26 02:00:03,185] DEBUG in enroll.api: SELECT * FROM InstructorClasses WHERE classID=3 AND SectionNumber=5
+[2023-10-26 02:00:03,185] DEBUG in enroll.api: SELECT StudentID FROM Enrollments WHERE ClassID = 3 AND SectionNumber = 5 AND EnrollmentStatus = 'DROPPED'
+
+[2023-10-26 02:01:54,533] DEBUG in enroll.api: SELECT * FROM Users WHERE UserId = 11
+[2023-10-26 02:01:54,534] DEBUG in enroll.api: SELECT * FROM InstructorClasses WHERE classID=3
+[2023-10-26 02:01:54,534] DEBUG in enroll.api: SELECT * FROM Enrollments WHERE classID=3 AND EnrollmentStatus='ENROLLED' AND StudentID=11
+[2023-10-26 02:01:54,534] DEBUG in enroll.api: BEGIN 
+[2023-10-26 02:01:54,534] DEBUG in enroll.api: UPDATE Enrollments SET EnrollmentStatus = 'DROPPED' WHERE StudentID = 11 AND ClassID = 3
+[2023-10-26 02:01:54,535] DEBUG in enroll.api: COMMIT
+[2023-10-26 02:01:54,566] DEBUG in enroll.api: SELECT * FROM Waitlists WHERE ClassID = 3 ORDER BY Position ASC
+
+[2023-10-26 02:02:43,075] DEBUG in enroll.api: SELECT * FROM Users WHERE UserId = 11
+[2023-10-26 02:02:43,075] DEBUG in enroll.api: SELECT * FROM InstructorClasses WHERE classID=3 AND SectionNumber=5
+[2023-10-26 02:02:43,075] DEBUG in enroll.api: SELECT * FROM Students INNER JOIN (SELECT StudentID, Position FROM Waitlists WHERE ClassID = 3 AND SectionNumber =5 ORDER BY Position) as w on Students.StudentID = w.StudentID
+
+[2023-10-26 02:04:51,651] DEBUG in urllib3.connectionpool: Starting new HTTP connection (1): localhost:5600
+[2023-10-26 02:04:51,736] DEBUG in urllib3.connectionpool: http://localhost:5600 "GET /user/get/5 HTTP/1.1" 200 120
+[2023-10-26 02:04:51,738] DEBUG in enroll.api: SELECT * FROM Users WHERE UserId = 5
+[2023-10-26 02:04:51,738] DEBUG in enroll.api: SELECT * FROM Classes WHERE ClassID = 3
+[2023-10-26 02:04:51,738] DEBUG in enroll.api: BEGIN 
+[2023-10-26 02:04:51,738] DEBUG in enroll.api: UPDATE InstructorClasses SET InstructorID=5 WHERE ClassID=3
+[2023-10-26 02:04:51,738] DEBUG in enroll.api: COMMIT
+
+[2023-10-26 02:06:17,385] DEBUG in enroll.api: SELECT * FROM Classes WHERE ClassID = '3' AND SectionNumber = '5'
+[2023-10-26 02:06:17,385] DEBUG in enroll.api: BEGIN 
+[2023-10-26 02:06:17,385] DEBUG in enroll.api: DELETE FROM Classes WHERE ClassID ='3' AND SectionNumber ='5'
+[2023-10-26 02:06:17,386] DEBUG in enroll.api: DELETE FROM InstructorClasses WHERE ClassID ='3' AND SectionNumber ='5'
+[2023-10-26 02:06:17,386] DEBUG in enroll.api: DELETE FROM Enrollments WHERE ClassID ='3' AND SectionNumber ='5'
+[2023-10-26 02:06:17,386] DEBUG in enroll.api: COMMIT
+
+[2023-10-26 02:07:05,251] DEBUG in enroll.api: BEGIN 
+[2023-10-26 02:07:05,251] DEBUG in enroll.api: UPDATE Freeze SET IsFrozen = false
+[2023-10-26 02:07:05,251] DEBUG in enroll.api: COMMIT

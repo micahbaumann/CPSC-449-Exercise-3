@@ -1,6 +1,7 @@
 import sqlite3
 import contextlib
 import requests
+import logging.config
 
 from fastapi import FastAPI, Depends, HTTPException, status, Request
 from pydantic_settings import BaseSettings
@@ -12,13 +13,19 @@ class Settings(BaseSettings, env_file="enroll/.env", extra="ignore"):
     database: str
     logging_config: str
 
-def get_db():
+def get_logger():
+    return logging.getLogger(__name__)
+
+def get_db(logger: logging.Logger = Depends(get_logger)):
     with contextlib.closing(sqlite3.connect(settings.database)) as db:
         db.row_factory = sqlite3.Row
+        db.set_trace_callback(logger.debug)
         yield db
 
 settings = Settings()
 app = FastAPI()
+
+logging.config.fileConfig(settings.logging_config, disable_existing_loggers=False)
 
 def check_id_exists_in_table(id_name: str,id_val: int, table_name: str, db: sqlite3.Connection = Depends(get_db)) -> bool:
     """return true if value found, false if not found"""
@@ -264,7 +271,7 @@ def view_waitlist(instructorid: int, classid: int, sectionid: int, name: str, us
 
 @app.post("/add/{classid}/{sectionid}/{professorid}/{enrollmax}/{waitmax}", status_code=status.HTTP_201_CREATED)
 def add_class(request: Request, classid: str, sectionid: str, professorid: int, enrollmax: int, waitmax: int, db: sqlite3.Connection = Depends(get_db)):
-    instructor_req = requests.get(f"http://localhost:5200/user/get/{professorid}", headers={"Authorization": request.headers.get("Authorization")})
+    instructor_req = requests.get(f"http://localhost:5600/user/get/{professorid}", headers={"Authorization": request.headers.get("Authorization")})
     instructor_info = instructor_req.json()
 
     if instructor_req.status_code != 200:

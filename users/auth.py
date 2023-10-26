@@ -13,7 +13,7 @@ from typing import List
 import logging.config
 
 ALGORITHM = "pbkdf2_sha256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 2000
 
 class Settings(BaseSettings, env_file="users/.env", extra="ignore"):
     database: str
@@ -36,7 +36,7 @@ def get_logger():
 def get_db(logger: logging.Logger = Depends(get_logger)):
     with contextlib.closing(sqlite3.connect(settings.database)) as db:
         db.row_factory = sqlite3.Row
-        # db.set_trace_callback(logger.debug)
+        db.set_trace_callback(logger.debug)
         yield db
 
 settings = Settings()
@@ -72,7 +72,7 @@ def expiration_in(minutes):
 
 
 def generate_claims(username, user_id, roles, name, email):
-    _, exp = expiration_in(2000)
+    _, exp = expiration_in(ACCESS_TOKEN_EXPIRE_MINUTES)
 
     claims = {
         "aud": "localhost:5200",

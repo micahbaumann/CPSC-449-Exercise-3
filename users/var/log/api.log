@@ -19,3 +19,11 @@
 
 [2023-10-24 21:18:32,005] DEBUG in users.auth: SELECT Email, FullName, UserId, Username FROM Registrations WHERE UserId = 11
 [2023-10-24 21:18:32,006] DEBUG in users.auth: SELECT roles.rolename FROM roles JOIN userroles ON roles.roleid = userroles.roleid WHERE userroles.userid=11
+[2023-10-25 01:25:57,713] DEBUG in users.auth: SELECT * FROM Registrations WHERE username = 'micah'
+[2023-10-25 01:25:57,894] DEBUG in users.auth: SELECT roles.rolename FROM roles JOIN userroles ON roles.roleid = userroles.roleid WHERE userroles.userid=11
+[2023-10-26 00:00:28,951] DEBUG in users.auth: SELECT * FROM Registrations WHERE username = 'micah'
+[2023-10-26 00:00:29,122] DEBUG in users.auth: SELECT roles.rolename FROM roles JOIN userroles ON roles.roleid = userroles.roleid WHERE userroles.userid=11
+[2023-10-26 00:29:15,034] DEBUG in users.auth: SELECT Email, FullName, UserId, Username FROM Registrations WHERE UserId = 11
+[2023-10-26 00:29:15,035] DEBUG in users.auth: SELECT roles.rolename FROM roles JOIN userroles ON roles.roleid = userroles.roleid WHERE userroles.userid=11
+[2023-10-26 02:04:51,717] DEBUG in users.auth: SELECT Email, FullName, UserId, Username FROM Registrations WHERE UserId = 5
+[2023-10-26 02:04:51,725] DEBUG in users.auth: SELECT roles.rolename FROM roles JOIN userroles ON roles.roleid = userroles.roleid WHERE userroles.userid=5
